@@ -23,6 +23,8 @@ I've searched the web for some ObservableCollections that have *Range methods, b
 - System.InvalidOperationException: The "2" index in the collection change event is not valid for collections of size "1".
 - More? I'm not sure. I forgot.
 
+If the `NotSupportedException` still occurred, try using `BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)`.
+
 In the end, I chose `XamarinCommunityToolkit/ObservableRangeCollection` and `weitzhandler/WpfObservableRangeCollection` and made slight changes to the code, and finally, I didn't encounter any problems, for now.
 
 ## Seealso
