@@ -3,6 +3,10 @@
 Provides ObservableRangeCollection and its WPF version, including AddRange, RemoveRange, Replace/ReplaceRange methods for bulk operation, but only update the notification once.
 
 ---
+
+[![NuGet](https://buildstats.info/nuget/WpfObservableRangeCollection?includePreReleases=true)](https://www.nuget.org/packages/WpfObservableRangeCollection)
+
+---
 ## Classes
 - `ObservableRangeCollection`: Represents a dynamic data collection that provides notifications when items get added, removed, or when the whole list is refreshed.
   > Forked from [XamarinCommunityToolkit/src/CommunityToolkit/Xamarin.CommunityToolkit/ObjectModel/ObservableRangeCollection.shared.cs](https://github.com/xamarin/XamarinCommunityToolkit/blob/main/src/CommunityToolkit/Xamarin.CommunityToolkit/ObjectModel/ObservableRangeCollection.shared.cs)
