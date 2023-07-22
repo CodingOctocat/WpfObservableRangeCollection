@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -11,7 +12,7 @@ namespace CodingNinja.Wpf.ObjectModel;
 /// <summary>
 /// Forked from <see href="https://gist.github.com/weitzhandler/65ac9113e31d12e697cb58cd92601091#file-wpfobservablerangecollection-cs"/>
 /// <para>see <see href="https://stackoverflow.com/a/670579/4380178"/></para>
-/// <para>If the <seealso cref="NotSupportedException"/> still occurred, try using <seealso cref="BindingOperations.EnableCollectionSynchronization"/>.</para>
+/// <para>If the <seealso cref="NotSupportedException"/> still occurred, try using <seealso cref="BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)"/>.</para>
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class WpfObservableRangeCollection<T> : ObservableRangeCollection<T>
@@ -54,12 +55,23 @@ public class WpfObservableRangeCollection<T> : ObservableRangeCollection<T>
 
     private DeferredEventsCollection? _deferredEvents;
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public WpfObservableRangeCollection()
     { }
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="collection"></param>
     public WpfObservableRangeCollection(IEnumerable<T> collection) : base(collection)
     { }
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="list"></param>
     public WpfObservableRangeCollection(List<T> list) : base(list)
     { }
 
