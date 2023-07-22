@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>CodingNinja.Wpf.ObjectModel</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Provides ObservableRangeCollection and its WPF version, including AddRange, RemoveRange, Replace/ReplaceRange methods for bulk operation, but only update the notification once.</Description>
