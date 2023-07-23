@@ -11,9 +11,9 @@ using System.Windows.Data;
 namespace CodingNinja.Wpf.ObjectModel;
 
 /// <summary>
-/// Wpf version of ObservableRangeCollection with CollectionView support.
-/// <para>If the <see cref="NotSupportedException"/> still occurred, try using <see cref="BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)"/>.</para>
+/// Wpf version of <see cref="ObservableRangeCollection{T}"/> with <see cref="CollectionView"/> support.
 /// </summary>
+/// <remarks>If the <see cref="NotSupportedException"/> still occurred, try using <see cref="BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)"/>.</remarks>
 /// <typeparam name="T"></typeparam>
 public class WpfObservableRangeCollection<T> : ObservableRangeCollection<T>
 {
@@ -58,38 +58,30 @@ public class WpfObservableRangeCollection<T> : ObservableRangeCollection<T>
 
     private DeferredEventsCollection? _deferredEvents;
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public WpfObservableRangeCollection(bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
         : base(allowDuplicates, comparer)
     { }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public WpfObservableRangeCollection(IEnumerable<T> collection, bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
         : base(collection, allowDuplicates, comparer)
     { }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public WpfObservableRangeCollection(List<T> list, bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
         : base(list, allowDuplicates, comparer)
     { }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     protected override IDisposable DeferEvents()
     {
         return new DeferredEventsCollection(this);
     }
 
     /// <summary>
-    /// Raise CollectionChanged event to any listeners.
-    /// Properties/methods modifying this ObservableCollection will raise
+    /// Raise <see cref="ObservableCollection{T}.CollectionChanged"/> event to any listeners.
+    /// Properties/methods modifying this <see cref="ObservableCollection{T}"/> will raise
     /// a collection changed event through this virtual method.
     /// </summary>
     /// <remarks>
