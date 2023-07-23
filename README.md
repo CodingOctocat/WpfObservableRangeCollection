@@ -1,6 +1,6 @@
 # WpfObservableRangeCollection
 
-Provides ObservableRangeCollection and its WPF version, including AddRange, InsertRange, RemoveRange, Replace/ReplaceRange methods for bulk operation, but only update the notification once.
+Provides ObservableRangeCollection and its WPF version, including AddRange, InsertRange, RemoveRange/RemoveAll, Replace/ReplaceRange methods for bulk operation to avoid frequent update notification events.
 
 ---
 
@@ -23,9 +23,9 @@ I've searched the web for some ObservableCollections that have *Range methods, b
 - System.InvalidOperationException: The "x" index in the collection change event is not valid for collections of size "y".
 - More? I'm not sure. I forgot.
 
-If the `NotSupportedException` still occurred, try using `BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)`.
-
 In the end, I chose `weitzhandler/RangeObservableCollection` and `weitzhandler/WpfObservableRangeCollection` and made slight changes to the code, and finally, I didn't encounter any problems, for now.
+
+> If the `NotSupportedException` still occurred, try using `BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)`.
 
 ## Seealso
 - [Cysharp/ObservableCollections](https://github.com/Cysharp/ObservableCollections)

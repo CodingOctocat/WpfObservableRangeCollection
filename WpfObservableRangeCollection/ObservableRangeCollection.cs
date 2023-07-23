@@ -9,10 +9,9 @@ using System.Linq;
 namespace CodingNinja.Wpf.ObjectModel;
 
 /// <summary>
-/// Implementation of a dynamic data collection based on <see cref="Collection{T}"/>,
-/// implementing <see cref="INotifyCollectionChanged"/> to notify listeners
-/// when items get added, removed or the whole list is refreshed.
+/// <see cref="ObservableCollection{T}"/> that supports bulk operations to avoid frequent update notification events.
 /// </summary>
+/// <typeparam name="T"></typeparam>
 public class ObservableRangeCollection<T> : ObservableCollection<T>
 {
     //------------------------------------------------------
@@ -37,10 +36,10 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of <see cref="ObservableCollection{T}"/> that is empty and has default initial capacity.
+    /// Initializes a new instance of <see cref="ObservableRangeCollection{T}"/> that is empty and has default initial capacity.
     /// </summary>
     /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
-    /// <param name="comparer">Support for <see cref="AllowDuplicates"/>.</param>
+    /// <param name="comparer">Supports for <see cref="AllowDuplicates"/>.</param>
     public ObservableRangeCollection(bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
     {
         AllowDuplicates = allowDuplicates;
@@ -48,15 +47,15 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ObservableCollection{T}"/> class that contains
+    /// Initializes a new instance of the <see cref="ObservableRangeCollection{T}"/> class that contains
     /// elements copied from the specified collection and has sufficient capacity
     /// to accommodate the number of elements copied.
     /// </summary>
     /// <param name="collection">The collection whose elements are copied to the new list.</param>
     /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
-    /// <param name="comparer">Support for <see cref="AllowDuplicates"/>.</param>
+    /// <param name="comparer">Supports for <see cref="AllowDuplicates"/>.</param>
     /// <remarks>
-    /// The elements are copied onto the <see cref="ObservableCollection{T}"/> in the
+    /// The elements are copied onto the <see cref="ObservableRangeCollection{T}"/> in the
     /// same order they are read by the enumerator of the collection.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is a null reference.</exception>
@@ -67,14 +66,14 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ObservableCollection{T}"/> class
+    /// Initializes a new instance of the <see cref="ObservableRangeCollection{T}"/> class
     /// that contains elements copied from the specified list.
     /// </summary>
     /// <param name="list">The list whose elements are copied to the new list.</param>
     /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
-    /// <param name="comparer">Support for <see cref="AllowDuplicates"/>.</param>
+    /// <param name="comparer">Supports for <see cref="AllowDuplicates"/>.</param>
     /// <remarks>
-    /// The elements are copied onto the <see cref="ObservableCollection{T}"/> in the
+    /// The elements are copied onto the <see cref="ObservableRangeCollection{T}"/> in the
     /// same order they are read by the enumerator of the list.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="list"/> is a null reference.</exception>
@@ -103,7 +102,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     public bool AllowDuplicates { get; set; } = true;
 
     /// <summary>
-    /// Support for <see cref="AllowDuplicates"/>.
+    /// Supports for <see cref="AllowDuplicates"/>.
     /// </summary>
     public EqualityComparer<T> Comparer { get; }
 
@@ -124,10 +123,11 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// The collection whose elements should be added to the end of the <see cref="ObservableCollection{T}"/>.
     /// The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.
     /// </param>
+    /// <returns>Returns the number of items successfully added.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
-    public void AddRange(IEnumerable<T> collection)
+    public int AddRange(IEnumerable<T> collection)
     {
-        InsertRange(Count, collection);
+        return InsertRange(Count, collection);
     }
 
     /// <summary>
@@ -138,9 +138,10 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// The collection whose elements should be inserted into the <see cref="List{T}"/>.
     /// The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.
     /// </param>
+    /// <returns>Returns the number of items successfully inserted.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is not in the collection range.</exception>
-    public void InsertRange(int index, IEnumerable<T> collection)
+    public int InsertRange(int index, IEnumerable<T> collection)
     {
         ArgumentNullException.ThrowIfNull(nameof(collection));
 
@@ -165,14 +166,14 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (limitedCount == 0)
         {
-            return;
+            return 0;
         }
 
         if (limitedCount == 1)
         {
             Add(collection.First());
 
-            return;
+            return 1;
         }
 
         CheckReentrancy();
@@ -184,15 +185,18 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         OnEssentialPropertiesChanged();
 
         // changedItems cannot be IEnumerable(lazy type).
-        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, collection.ToList(), index));
+        var changedItems = collection.ToList();
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems, index));
+
+        return changedItems.Count;
     }
 
     /// <summary>
     /// Iterates over the collection and removes all items that satisfy the specified match.
     /// </summary>
     /// <remarks>The complexity is O(n).</remarks>
-    /// <param name="match">Match the item to be removed</param>
-    /// <returns>Returns the number of elements that where </returns>
+    /// <param name="match">A function to test each element for a condition.</param>
+    /// <returns>Returns the number of items successfully removed.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="match"/> is null.</exception>
     public int RemoveAll(Predicate<T> match)
     {
@@ -206,8 +210,8 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <remarks>The complexity is O(n).</remarks>
     /// <param name="index">The index of where to start performing the search.</param>
     /// <param name="count">The number of items to iterate on.</param>
-    /// <param name="match">Match the item to be removed.</param>
-    /// <returns>Returns the number of elements that where.</returns>
+    /// <param name="match">A function to test each element for a condition.</param>
+    /// <returns>Returns the number of items successfully removed.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is out of range.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is out of range.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="match"/> is null.</exception>
@@ -225,7 +229,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (index + count > Count)
         {
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
         }
 
         ArgumentNullException.ThrowIfNull(nameof(match));
@@ -292,42 +296,44 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <para>NOTE: Removed items starting index is not set because items are not guaranteed to be consecutive.</para>
     /// </summary>
     /// <param name="collection">The items to remove.</param>
+    /// <returns>Returns the number of items successfully removed.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
-    public void RemoveRange(IEnumerable<T> collection)
+    public int RemoveRange(IEnumerable<T> collection)
     {
         ArgumentNullException.ThrowIfNull(nameof(collection));
 
         if (Count == 0)
         {
-            return;
+            return 0;
         }
 
         int limitedCount = collection.Take(2).Count();
 
         if (limitedCount == 0)
         {
-            return;
+            return 0;
         }
 
         if (limitedCount == 1)
         {
-            Remove(collection.First());
+            bool removed = Remove(collection.First());
 
-            return;
+            return removed ? 1 : 0;
         }
 
         CheckReentrancy();
 
-        bool raiseEvents = false;
+        int removedCount = 0;
 
         foreach (var item in collection)
         {
-            raiseEvents |= Items.Remove(item);
+            bool removed = Items.Remove(item);
+            removedCount += removed ? 1 : 0;
         }
 
-        if (!raiseEvents)
+        if (removedCount == 0)
         {
-            return;
+            return 0;
         }
 
         OnEssentialPropertiesChanged();
@@ -341,6 +347,8 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             // changedItems cannot be IEnumerable(lazy type).
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, collection.ToList()));
         }
+
+        return removedCount;
     }
 
     /// <summary>
@@ -363,7 +371,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (index + count > Count)
         {
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
         }
 
         if (count == 0)
@@ -378,6 +386,13 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             return;
         }
 
+        if (index == 0 && count == Count)
+        {
+            Clear();
+
+            return;
+        }
+
         // Items will always be List<T>, see constructors.
         var items = (List<T>)Items;
         var removedItems = items.GetRange(index, count);
@@ -388,14 +403,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         OnEssentialPropertiesChanged();
 
-        if (Count == 0)
-        {
-            OnCollectionReset();
-        }
-        else
-        {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedItems, index));
-        }
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedItems, index));
     }
 
     /// <summary>
@@ -419,7 +427,9 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
     /// <summary>
     /// Removes the specified range and inserts the specified collection in its position, leaving equal items in equal positions intact.
+    /// <para>When index and count are equal to 0, it is equivalent to InsertRange(0, collection).</para>
     /// </summary>
+    /// <remarks>This method is roughly equivalent to <see cref="RemoveRange(Int32, Int32)"/> then <see cref="InsertRange(Int32, IEnumerable{T})"/>.</remarks>
     /// <param name="index">The index of where to start the replacement.</param>
     /// <param name="count">The number of items to be replaced.</param>
     /// <param name="collection">The collection to insert in that location.</param>
@@ -461,7 +471,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (index + count > Count)
         {
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
         }
 
         ArgumentNullException.ThrowIfNull(nameof(collection));
@@ -597,10 +607,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             return;
         }
 
-        CheckReentrancy();
         base.ClearItems();
-        OnEssentialPropertiesChanged();
-        OnCollectionReset();
     }
 
     /// <summary>
@@ -659,12 +666,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             return;
         }
 
-        CheckReentrancy();
-        var oldItem = this[index];
         base.SetItem(index, item);
-
-        OnIndexerPropertyChanged();
-        OnCollectionChanged(NotifyCollectionChangedAction.Replace, oldItem!, item!, index);
     }
 
     #endregion Protected Methods
@@ -676,14 +678,6 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     //------------------------------------------------------
 
     #region Private Methods
-
-    /// <summary>
-    /// Helper to raise CollectionChanged event to any listeners.
-    /// </summary>
-    private void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index)
-    {
-        OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
-    }
 
     /// <summary>
     /// Helper to raise CollectionChanged event with action == Reset to any listeners.

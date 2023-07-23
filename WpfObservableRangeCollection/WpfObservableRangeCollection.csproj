@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -8,13 +8,13 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Provides ObservableRangeCollection and its WPF version, including AddRange, InsertRange, RemoveRange, Replace/ReplaceRange methods for bulk operation, but only update the notification once.</Description>
+    <Description>Provides ObservableRangeCollection and its WPF version, including AddRange, InsertRange, RemoveRange/RemoveAll, Replace/ReplaceRange methods for bulk operation to avoid frequent update notification events.</Description>
     <PackageProjectUrl>https://github.com/CodingOctocat/WpfObservableRangeCollection</PackageProjectUrl>
     <Authors>CodingNinja</Authors>
     <Title>$(AssemblyName)</Title>
     <PackageTags>WpfObservableRangeCollection;ObservableRangeCollection;ObservableCollection;CollectionView;Wpf</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
     <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
   </PropertyGroup>
 
