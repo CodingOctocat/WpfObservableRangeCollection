@@ -61,19 +61,22 @@ public class WpfObservableRangeCollection<T> : ObservableRangeCollection<T>
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public WpfObservableRangeCollection() : base()
+    public WpfObservableRangeCollection(bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
+        : base(allowDuplicates, comparer)
     { }
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public WpfObservableRangeCollection(IEnumerable<T> collection) : base(collection)
+    public WpfObservableRangeCollection(IEnumerable<T> collection, bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
+        : base(collection, allowDuplicates, comparer)
     { }
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public WpfObservableRangeCollection(List<T> list) : base(list)
+    public WpfObservableRangeCollection(List<T> list, bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
+        : base(list, allowDuplicates, comparer)
     { }
 
     /// <summary>

@@ -39,35 +39,50 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <summary>
     /// Initializes a new instance of <see cref="ObservableCollection{T}"/> that is empty and has default initial capacity.
     /// </summary>
-    public ObservableRangeCollection()
-    { }
+    /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
+    /// <param name="comparer">Support for <see cref="AllowDuplicates"/>.</param>
+    public ObservableRangeCollection(bool allowDuplicates = true, EqualityComparer<T>? comparer = null)
+    {
+        AllowDuplicates = allowDuplicates;
+        Comparer = comparer ?? EqualityComparer<T>.Default;
+    }
 
     /// <summary>
-    /// Initializes a new instance of the ObservableCollection class that contains
+    /// Initializes a new instance of the <see cref="ObservableCollection{T}"/> class that contains
     /// elements copied from the specified collection and has sufficient capacity
     /// to accommodate the number of elements copied.
     /// </summary>
     /// <param name="collection">The collection whose elements are copied to the new list.</param>
+    /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
+    /// <param name="comparer">Support for <see cref="AllowDuplicates"/>.</param>
     /// <remarks>
-    /// The elements are copied onto the ObservableCollection in the
+    /// The elements are copied onto the <see cref="ObservableCollection{T}"/> in the
     /// same order they are read by the enumerator of the collection.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is a null reference.</exception>
-    public ObservableRangeCollection(IEnumerable<T> collection) : base(collection)
-    { }
+    public ObservableRangeCollection(IEnumerable<T> collection, bool allowDuplicates = true, EqualityComparer<T>? comparer = null) : base(collection)
+    {
+        AllowDuplicates = allowDuplicates;
+        Comparer = comparer ?? EqualityComparer<T>.Default;
+    }
 
     /// <summary>
-    /// Initializes a new instance of the ObservableCollection class
+    /// Initializes a new instance of the <see cref="ObservableCollection{T}"/> class
     /// that contains elements copied from the specified list.
     /// </summary>
     /// <param name="list">The list whose elements are copied to the new list.</param>
+    /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
+    /// <param name="comparer">Support for <see cref="AllowDuplicates"/>.</param>
     /// <remarks>
-    /// The elements are copied onto the ObservableCollection in the
+    /// The elements are copied onto the <see cref="ObservableCollection{T}"/> in the
     /// same order they are read by the enumerator of the list.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="list"/> is a null reference.</exception>
-    public ObservableRangeCollection(List<T> list) : base(list)
-    { }
+    public ObservableRangeCollection(List<T> list, bool allowDuplicates = true, EqualityComparer<T>? comparer = null) : base(list)
+    {
+        AllowDuplicates = allowDuplicates;
+        Comparer = comparer ?? EqualityComparer<T>.Default;
+    }
 
     #endregion Constructors
 
@@ -78,8 +93,6 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     //------------------------------------------------------
 
     #region Public Properties
-
-    private EqualityComparer<T>? _comparer;
 
     /// <summary>
     /// Gets or sets a value indicating whether this collection acts as a <see cref="HashSet{T}"/>,
@@ -92,11 +105,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <summary>
     /// Support for <see cref="AllowDuplicates"/>.
     /// </summary>
-    public EqualityComparer<T> Comparer
-    {
-        get => _comparer ??= EqualityComparer<T>.Default;
-        private set => _comparer = value;
-    }
+    public EqualityComparer<T> Comparer { get; }
 
     #endregion Public Properties
 
@@ -182,7 +191,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// Iterates over the collection and removes all items that satisfy the specified match.
     /// </summary>
     /// <remarks>The complexity is O(n).</remarks>
-    /// <param name="match"></param>
+    /// <param name="match">Match the item to be removed</param>
     /// <returns>Returns the number of elements that where </returns>
     /// <exception cref="ArgumentNullException"><paramref name="match"/> is null.</exception>
     public int RemoveAll(Predicate<T> match)
@@ -192,11 +201,12 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
     /// <summary>
     /// Iterates over the specified range within the collection and removes all items that satisfy the specified match.
+    /// <para>NOTE: Consecutively matching elements will trigger the <see cref="ObservableCollection{T}.CollectionChanged"/> event at once.</para>
     /// </summary>
     /// <remarks>The complexity is O(n).</remarks>
     /// <param name="index">The index of where to start performing the search.</param>
     /// <param name="count">The number of items to iterate on.</param>
-    /// <param name="match"></param>
+    /// <param name="match">Match the item to be removed.</param>
     /// <returns>Returns the number of elements that where.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is out of range.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is out of range.</exception>
@@ -279,6 +289,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
     /// <summary>
     /// Removes the first occurence of each item in the specified collection from the <see cref="ObservableCollection{T}"/>.
+    /// <para>NOTE: Removed items starting index is not set because items are not guaranteed to be consecutive.</para>
     /// </summary>
     /// <param name="collection">The items to remove.</param>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
@@ -307,29 +318,16 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         CheckReentrancy();
 
-        var clusters = new Dictionary<int, List<T>>();
-        int lastIndex = -1;
-        List<T>? lastCluster = null;
+        bool raiseEvents = false;
 
         foreach (var item in collection)
         {
-            int index = IndexOf(item);
+            raiseEvents |= Items.Remove(item);
+        }
 
-            if (index < 0)
-            {
-                continue;
-            }
-
-            Items.RemoveAt(index);
-
-            if (lastIndex == index && lastCluster is not null)
-            {
-                lastCluster.Add(item);
-            }
-            else
-            {
-                clusters[lastIndex = index] = lastCluster = new List<T> { item };
-            }
+        if (!raiseEvents)
+        {
+            return;
         }
 
         OnEssentialPropertiesChanged();
@@ -376,6 +374,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         if (count == 1)
         {
             RemoveItem(index);
+
             return;
         }
 
@@ -400,8 +399,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Clears the current collection and replaces it with the specified item,
-    /// using <see cref="Comparer"/>.
+    /// Clears the current collection and replaces it with the specified item, using <see cref="Comparer"/>.
     /// </summary>
     /// <param name="item">The item to fill the collection with, after clearing it.</param>
     public void Replace(T item)
@@ -410,8 +408,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Clears the current collection and replaces it with the specified collection,
-    /// using <see cref="Comparer"/>.
+    /// Clears the current collection and replaces it with the specified collection, using <see cref="Comparer"/>.
     /// </summary>
     /// <param name="collection">The items to fill the collection with, after clearing it.</param>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
@@ -681,7 +678,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     #region Private Methods
 
     /// <summary>
-    /// Helper to raise CollectionChanged event to any listeners
+    /// Helper to raise CollectionChanged event to any listeners.
     /// </summary>
     private void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index)
     {
@@ -689,7 +686,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Helper to raise CollectionChanged event with action == Reset to any listeners
+    /// Helper to raise CollectionChanged event with action == Reset to any listeners.
     /// </summary>
     private void OnCollectionReset()
     {
@@ -706,8 +703,8 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// /// Helper to raise a PropertyChanged event for the Indexer property
-    /// /// </summary>
+    /// Helper to raise a PropertyChanged event for the Indexer property.
+    /// </summary>
     private void OnIndexerPropertyChanged()
     {
         OnPropertyChanged(EventArgsCache.IndexerPropertyChanged);
