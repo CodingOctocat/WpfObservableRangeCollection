@@ -4,16 +4,17 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <RootNamespace>CodingNinja.Wpf.ObjectModel</RootNamespace>
+    <RootNamespace>System.Collections.ObjectModel.Ex</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Provides ObservableRangeCollection and its WPF version, including AddRange, RemoveRange, Replace/ReplaceRange methods for bulk operation, but only update the notification once.</Description>
+    <Description>Provides ObservableRangeCollection and its WPF version, including AddRange, InsertRange, RemoveRange, Replace/ReplaceRange methods for bulk operation, but only update the notification once.</Description>
     <PackageProjectUrl>https://github.com/CodingOctocat/WpfObservableRangeCollection</PackageProjectUrl>
     <Authors>CodingNinja</Authors>
     <Title>$(AssemblyName)</Title>
     <PackageTags>WpfObservableRangeCollection;ObservableRangeCollection;ObservableCollection;CollectionView;Wpf</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
