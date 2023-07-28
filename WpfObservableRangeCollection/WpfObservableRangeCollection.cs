@@ -11,7 +11,7 @@ using System.Windows.Data;
 namespace CodingNinja.Wpf.ObjectModel;
 
 /// <summary>
-/// Wpf version of <see cref="ObservableRangeCollection{T}"/> with <see cref="CollectionView"/> support.
+/// WPF version of <see cref="ObservableRangeCollection{T}"/> with <see cref="CollectionView"/> support.
 /// </summary>
 /// <remarks>If the <see cref="NotSupportedException"/> still occurred, try using <see cref="BindingOperations.EnableCollectionSynchronization(IEnumerable, Object)"/>.</remarks>
 /// <typeparam name="T"></typeparam>
