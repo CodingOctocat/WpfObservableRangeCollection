@@ -9,7 +9,7 @@ using System.Linq;
 namespace CodingNinja.Wpf.ObjectModel;
 
 /// <summary>
-/// <see cref="ObservableCollection{T}"/> that supports bulk operations to avoid frequent update notification events.
+/// An <see cref="ObservableCollection{T}"/> that supports bulk operations to avoid frequent update notification events.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class ObservableRangeCollection<T> : ObservableCollection<T>
@@ -48,14 +48,14 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObservableRangeCollection{T}"/> class that contains
-    /// elements copied from the specified collection and has sufficient capacity
-    /// to accommodate the number of elements copied.
+    /// items copied from the specified collection and has sufficient capacity
+    /// to accommodate the number of items copied.
     /// </summary>
-    /// <param name="collection">The collection whose elements are copied to the new list.</param>
+    /// <param name="collection">The collection whose items are copied to the new list.</param>
     /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
     /// <param name="comparer">Supports for <see cref="AllowDuplicates"/>.</param>
     /// <remarks>
-    /// The elements are copied onto the <see cref="ObservableRangeCollection{T}"/> in the
+    /// The items are copied onto the <see cref="ObservableRangeCollection{T}"/> in the
     /// same order they are read by the enumerator of the collection.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is a null reference.</exception>
@@ -67,13 +67,13 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObservableRangeCollection{T}"/> class
-    /// that contains elements copied from the specified list.
+    /// that contains items copied from the specified list.
     /// </summary>
-    /// <param name="list">The list whose elements are copied to the new list.</param>
+    /// <param name="list">The list whose items are copied to the new list.</param>
     /// <param name="allowDuplicates">Whether duplicate items are allowed in the collection.</param>
     /// <param name="comparer">Supports for <see cref="AllowDuplicates"/>.</param>
     /// <remarks>
-    /// The elements are copied onto the <see cref="ObservableRangeCollection{T}"/> in the
+    /// The items are copied onto the <see cref="ObservableRangeCollection{T}"/> in the
     /// same order they are read by the enumerator of the list.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="list"/> is a null reference.</exception>
@@ -98,11 +98,13 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// disallowing duplicate items, based on <see cref="Comparer"/>.
     /// This might indeed consume background performance, but in the other hand,
     /// it will pay off in UI performance as less required UI updates are required.
+    /// Default value: <see langword="true"/>.
     /// </summary>
     public bool AllowDuplicates { get; set; } = true;
 
     /// <summary>
     /// Supports for <see cref="AllowDuplicates"/>.
+    /// Default value: <see cref="EqualityComparer{T}.Default"/>.
     /// </summary>
     public EqualityComparer<T> Comparer { get; }
 
@@ -117,13 +119,13 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     #region Public Methods
 
     /// <summary>
-    /// Adds the elements of the specified collection to the end of the <see cref="ObservableCollection{T}"/>.
+    /// Adds the items of the specified collection to the end of this <see cref="ObservableCollection{T}"/>.
     /// </summary>
     /// <param name="collection">
-    /// The collection whose elements should be added to the end of the <see cref="ObservableCollection{T}"/>.
-    /// The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.
+    /// The collection whose items should be added to the end of this <see cref="ObservableCollection{T}"/>.
+    /// The collection itself cannot be null, but it can contain items that are null, if type T is a reference type.
     /// </param>
-    /// <returns>Returns the number of items successfully added.</returns>
+    /// <returns>Returns the number of items successfully added, its related to <see cref="AllowDuplicates"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
     public int AddRange(IEnumerable<T> collection)
     {
@@ -131,14 +133,14 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Inserts the elements of a collection into the <see cref="ObservableCollection{T}"/> at the specified index.
+    /// Inserts the items of a collection into this <see cref="ObservableCollection{T}"/> at the specified index.
     /// </summary>
-    /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
+    /// <param name="index">The zero-based index at which the new items should be inserted.</param>
     /// <param name="collection">
-    /// The collection whose elements should be inserted into the <see cref="List{T}"/>.
-    /// The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.
+    /// The collection whose items should be inserted into the <see cref="List{T}"/>.
+    /// The collection itself cannot be null, but it can contain items that are null, if type T is a reference type.
     /// </param>
-    /// <returns>Returns the number of items successfully inserted.</returns>
+    /// <returns>Returns the number of items successfully inserted, its related to <see cref="AllowDuplicates"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is not in the collection range.</exception>
     public int InsertRange(int index, IEnumerable<T> collection)
@@ -184,7 +186,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         OnEssentialPropertiesChanged();
 
-        // changedItems cannot be IEnumerable(lazy type).
+        // changedItems cannot be IEnumerable(lazy evaluation).
         var changedItems = collection.ToList();
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems, index));
 
@@ -195,7 +197,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// Iterates over the collection and removes all items that satisfy the specified match.
     /// </summary>
     /// <remarks>The complexity is O(n).</remarks>
-    /// <param name="match">A function to test each element for a condition.</param>
+    /// <param name="match">A function to test each item for a condition.</param>
     /// <returns>Returns the number of items successfully removed.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="match"/> is null.</exception>
     public int RemoveAll(Predicate<T> match)
@@ -205,15 +207,16 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
     /// <summary>
     /// Iterates over the specified range within the collection and removes all items that satisfy the specified match.
-    /// <para>NOTE: Consecutively matching elements will trigger the <see cref="ObservableCollection{T}.CollectionChanged"/> event at once.</para>
+    /// <para>NOTE: Consecutively matching items will trigger the <see cref="ObservableCollection{T}.CollectionChanged"/> event at once.</para>
     /// </summary>
     /// <remarks>The complexity is O(n).</remarks>
     /// <param name="index">The index of where to start performing the search.</param>
     /// <param name="count">The number of items to iterate on.</param>
-    /// <param name="match">A function to test each element for a condition.</param>
+    /// <param name="match">A function to test each item for a condition.</param>
     /// <returns>Returns the number of items successfully removed.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is out of range.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is out of range.</exception>
+    /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentNullException"><paramref name="match"/> is null.</exception>
     public int RemoveAll(int index, int count, Predicate<T> match)
     {
@@ -227,9 +230,9 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        if (index + count > Count)
+        if (Count - index < count)
         {
-            throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
+            throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of items from index to the end of the source collection.");
         }
 
         ArgumentNullException.ThrowIfNull(match);
@@ -292,7 +295,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Removes the first occurence of each item in the specified collection from the <see cref="ObservableCollection{T}"/>.
+    /// Removes the first occurence of each item in the specified collection from this <see cref="ObservableCollection{T}"/>.
     /// <para>NOTE: Removed items starting index is not set because items are not guaranteed to be consecutive.</para>
     /// </summary>
     /// <param name="collection">The items to remove.</param>
@@ -344,7 +347,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         }
         else
         {
-            // changedItems cannot be IEnumerable(lazy type).
+            // changedItems cannot be IEnumerable(lazy evaluation).
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, collection.ToList()));
         }
 
@@ -352,11 +355,12 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// Removes a range of elements from the <see cref="ObservableCollection{T}"/>.
+    /// Removes a range of items from this <see cref="ObservableCollection{T}"/>.
     /// </summary>
-    /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
-    /// <param name="count">The number of elements to remove.</param>
+    /// <param name="index">The zero-based starting index of the range of items to remove.</param>
+    /// <param name="count">The number of items to remove.</param>
     /// <exception cref="ArgumentOutOfRangeException">The specified range is exceeding the collection.</exception>
+    /// <exception cref="ArgumentException"/>
     public void RemoveRange(int index, int count)
     {
         if (index < 0)
@@ -369,9 +373,9 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        if (index + count > Count)
+        if (Count - index < count)
         {
-            throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
+            throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of items from index to the end of the source collection.");
         }
 
         if (count == 0)
@@ -410,34 +414,37 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// Clears the current collection and replaces it with the specified item, using <see cref="Comparer"/>.
     /// </summary>
     /// <param name="item">The item to fill the collection with, after clearing it.</param>
-    public void Replace(T item)
+    /// <returns>Returns the amount of change in the number of current collection.</returns>
+    public int Replace(T item)
     {
-        ReplaceRange(0, Count, new[] { item });
+        return ReplaceRange(0, Count, new[] { item });
     }
 
     /// <summary>
     /// Clears the current collection and replaces it with the specified collection, using <see cref="Comparer"/>.
     /// </summary>
     /// <param name="collection">The items to fill the collection with, after clearing it.</param>
+    /// <returns>Returns the amount of change in the number of current collection.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
-    public void ReplaceRange(IEnumerable<T> collection)
+    public int ReplaceRange(IEnumerable<T> collection)
     {
-        ReplaceRange(0, Count, collection);
+        return ReplaceRange(0, Count, collection);
     }
 
     /// <summary>
     /// Removes the specified range and inserts the specified collection in its position, leaving equal items in equal positions intact.
-    /// <para>When index and count are equal to 0, it is equivalent to InsertRange(0, collection).</para>
+    /// <para>When both index and count are equal to 0, it is equivalent to InsertRange(0, collection).</para>
     /// </summary>
     /// <remarks>This method is roughly equivalent to <see cref="RemoveRange(Int32, Int32)"/> then <see cref="InsertRange(Int32, IEnumerable{T})"/>.</remarks>
     /// <param name="index">The index of where to start the replacement.</param>
     /// <param name="count">The number of items to be replaced.</param>
     /// <param name="collection">The collection to insert in that location.</param>
+    /// <returns>Returns the amount of change in the number of current collection.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is out of range.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is out of range.</exception>
+    /// <exception cref="ArgumentException"/>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
-    /// <exception cref="ArgumentNullException"><see cref="Comparer"/> is null.</exception>
-    public void ReplaceRange(int index, int count, IEnumerable<T> collection)
+    public int ReplaceRange(int index, int count, IEnumerable<T> collection)
     {
         void OnRangeReplaced(int followingItemIndex, ICollection<T> newCluster, ICollection<T> oldCluster)
         {
@@ -469,9 +476,9 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        if (index + count > Count)
+        if (Count - index < count)
         {
-            throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
+            throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of items from index to the end of the source collection.");
         }
 
         ArgumentNullException.ThrowIfNull(collection);
@@ -480,7 +487,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         {
             RemoveRange(index, count);
 
-            return;
+            return -count;
         }
 
         if (!AllowDuplicates)
@@ -492,10 +499,12 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (index + count == 0)
         {
-            InsertRange(0, collection);
+            int added = InsertRange(0, collection);
 
-            return;
+            return added;
         }
+
+        int oldCount = Count;
 
         if (collection is not IList<T> list)
         {
@@ -584,6 +593,8 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
                 OnIndexerPropertyChanged();
             }
         }
+
+        return Count - oldCount;
     }
 
     #endregion Public Methods
