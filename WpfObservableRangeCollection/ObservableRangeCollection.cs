@@ -143,7 +143,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is not in the collection range.</exception>
     public int InsertRange(int index, IEnumerable<T> collection)
     {
-        ArgumentNullException.ThrowIfNull(nameof(collection));
+        ArgumentNullException.ThrowIfNull(collection);
 
         if (index < 0)
         {
@@ -232,7 +232,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
         }
 
-        ArgumentNullException.ThrowIfNull(nameof(match));
+        ArgumentNullException.ThrowIfNull(match);
 
         if (Count == 0)
         {
@@ -300,7 +300,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is null.</exception>
     public int RemoveRange(IEnumerable<T> collection)
     {
-        ArgumentNullException.ThrowIfNull(nameof(collection));
+        ArgumentNullException.ThrowIfNull(collection);
 
         if (Count == 0)
         {
@@ -474,7 +474,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             throw new ArgumentException($"{nameof(index)} + {nameof(count)} must be less than or equal to the ObservableCollection.Count.");
         }
 
-        ArgumentNullException.ThrowIfNull(nameof(collection));
+        ArgumentNullException.ThrowIfNull(collection);
 
         if (!collection.Any())
         {
