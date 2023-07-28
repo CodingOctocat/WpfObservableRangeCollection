@@ -94,13 +94,13 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     #region Public Properties
 
     /// <summary>
-    /// Gets or sets a value indicating whether this collection acts as a <see cref="HashSet{T}"/>,
+    /// Gets a value indicating whether this collection acts as a <see cref="HashSet{T}"/>,
     /// disallowing duplicate items, based on <see cref="Comparer"/>.
     /// This might indeed consume background performance, but in the other hand,
     /// it will pay off in UI performance as less required UI updates are required.
     /// Default value: <see langword="true"/>.
     /// </summary>
-    public bool AllowDuplicates { get; set; } = true;
+    public bool AllowDuplicates { get; } = true;
 
     /// <summary>
     /// Supports for <see cref="AllowDuplicates"/>.
