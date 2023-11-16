@@ -1,7 +1,8 @@
 # WpfObservableRangeCollection
 
 [![NuGet](https://buildstats.info/nuget/WpfObservableRangeCollection?includePreReleases=true)](https://www.nuget.org/packages/WpfObservableRangeCollection/)
-[![Target framework](https://img.shields.io/badge/support-.NET_6.0--Windows-blue)](https://github.com/CodingOctocat/WpfObservableRangeCollection)
+[![Target framework](https://img.shields.io/badge/support-.NET_6.0--Windows7.0-blue)](https://github.com/CodingOctocat/WpfObservableRangeCollection)
+[![Target framework](https://img.shields.io/badge/support-.NET_8.0--Windows7.0-blue)](https://github.com/CodingOctocat/WpfObservableRangeCollection)
 [![GitHub issues](https://img.shields.io/github/issues/CodingOctocat/WpfObservableRangeCollection)](https://github.com/CodingOctocat/WpfObservableRangeCollection/issues)
 [![GitHub stars](https://img.shields.io/github/stars/CodingOctocat/WpfObservableRangeCollection)](https://github.com/CodingOctocat/WpfObservableRangeCollection/stargazers)
 [![GitHub license](https://img.shields.io/github/license/CodingOctocat/WpfObservableRangeCollection)](https://github.com/CodingOctocat/WpfObservableRangeCollection/blob/master/LICENSE)

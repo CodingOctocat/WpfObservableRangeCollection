@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFrameworks>net6.0-windows7.0;net8.0-windows7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>CodingNinja.Wpf.ObjectModel</RootNamespace>
@@ -14,7 +14,7 @@
     <Title>$(AssemblyName)</Title>
     <PackageTags>WpfObservableRangeCollection;ObservableRangeCollection;ObservableCollection;CollectionView;Wpf</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
     <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
   </PropertyGroup>
 
