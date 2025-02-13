@@ -618,7 +618,10 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             return;
         }
 
+        CheckReentrancy();
         base.ClearItems();
+        OnEssentialPropertiesChanged();
+        OnCollectionReset();
     }
 
     /// <summary>
@@ -633,7 +636,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <inheritdoc/>
     protected override void InsertItem(int index, T item)
     {
-        if (!AllowDuplicates && Items.Contains(item))
+        if (!AllowDuplicates && Items.Contains(item, Comparer))
         {
             return;
         }
@@ -677,7 +680,12 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             return;
         }
 
+        CheckReentrancy();
+        var oldItem = this[index];
         base.SetItem(index, item);
+
+        OnIndexerPropertyChanged();
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, oldItem!, item!, index));
     }
 
     #endregion Protected Methods
